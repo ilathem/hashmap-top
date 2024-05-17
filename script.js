@@ -5,13 +5,14 @@ class LinkedList {
   }
 
   toString() {
+    if (!this.root) return '';
     let string = `[ ${this.root?.key}, ${this.root?.value} ]`;
-    let node = this.root;
+    let node = this.root.next;
     while (node) {
-      string += `, [ ${this.root?.key}, ${this.root?.value} ]`; 
+      string += `, [ ${this.root?.key}, ${this.root?.value} ]`;
       node = node.next;
     }
-    console.log(string);
+    return string;
   }
 
   append(key, value) {
@@ -106,14 +107,24 @@ class LinkedList {
   //   }
   // }
 
-  // returns the node of the node containing key, or null if not found
-  find(key) {
+  findIndex = (key) => {
     if (!this.root) return false;
     let node = this.root;
     let i = 0;
     while (node) {
-      if (node.key === key) return node;
+      if (node.key === key) return i;
       i++;
+      node = node.next;
+    }
+    return null;
+  };
+
+  // returns the node of the node containing key, or null if not found
+  find(key) {
+    if (!this.root) return false;
+    let node = this.root;
+    while (node) {
+      if (node.key === key) return node;
       node = node.next;
     }
     return null;
@@ -152,34 +163,25 @@ class LinkedList {
   //   }
   // }
 
-  // removeAt(index) {
-  //   if (index < 0) {
-  //     console.error('Cannot remove at negative indices');
-  //     return null;
-  //   }
-  //   if (index === 0) {
-  //     if (!this.root) {
-  //       console.error('Cannot remove that which is empty');
-  //       return null;
-  //     }
-  //     const removedNode = this.root;
-  //     this.root = this.root.next;
-  //     return removedNode;
-  //   }
-  //   let i = 1;
-  //   let node = this.root;
-  //   while (node.next) {
-  //     if (index === i) {
-  //       const removedNode = node.next;
-  //       node.next = removedNode.next;
-  //       return removedNode;
-  //     }
-  //     node = node.next;
-  //     i++;
-  //   }
-  //   console.error('Cannot remove past list bounds');
-  //   return null;
-  // }
+  remove(key) {
+    if (!this.root) return null;
+    if (this.root.key === key) {
+      const removedNode = this.root;
+      this.root = this.root.next;
+      return removedNode;
+    }
+    let node = this.root;
+    while (node.next) {
+      if (node.key === key) {
+        const removedNode = node.next;
+        node.next = removedNode.next;
+        return removedNode;
+      }
+      node = node.next;
+      i++;
+    }
+    return null;
+  }
 }
 
 class Node {
@@ -198,14 +200,14 @@ class HashMap {
     }
   }
 
-  hash = key => {
+  hash = (key) => {
     let hashCode = 0;
     const primeNumber = 31;
     for (let i = 0; i < key.length; i++) {
       hashCode = (primeNumber * hashCode + key.charCodeAt(i)) % this.map.length;
     }
     return hashCode;
-  }
+  };
 
   // update key with value, create if non-existent
   set = (key, value) => {
@@ -217,23 +219,42 @@ class HashMap {
     } else {
       bucket.append(key, value);
     }
-  }
+  };
 
   // return value associated with key, or null if none
-  get = key => {
+  get = (key) => {
     const bucket = this.map[this.hash(key)];
     const node = bucket.find(key);
     if (node) return node.value;
     return null;
-  }
+  };
 
   // return true if key is in hash map, false if not
-  has = key => this.get(key) ? true : false 
+  has = (key) => (this.get(key) ? true : false);
 
+  // remove key in hash map, return true if success, false if fail
+  remove = (key) => this.map[this.hash(key)].remove(key) && true;
 
+  // print array containing all [key, value] pairs
+  entries = () => {
+    let string = '';
+    this.map.forEach((bucket)=> {
+      if (bucket.head() && string.length > 0) string += ', '
+      string += bucket.toString()
+    });
+    console.log(string);
+  }
 }
 
 const map = new HashMap();
 map.set('Carlos', 'A cool guy');
-console.log(`The map ${map.has('Carlos') ? 'does' : 'does not'} have 'Carlos'`)
-console.log(`The map ${map.has('Zach') ? 'does' : 'does not'} have 'Zach'`)
+map.set('Carla', 'A cool gal');
+map.entries();
+console.log(`The map ${map.has('Carlos') ? 'does' : 'does not'} have 'Carlos'`);
+console.log(
+  `${map.remove('Carlos') ? 'Successfully' : 'Unsuccessfully'} removed 'Carlos'`
+);
+console.log(
+  `${map.remove('Steven') ? 'Successfully' : 'Unsuccessfully'} removed 'Steven'`
+);
+map.entries();
