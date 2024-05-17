@@ -198,7 +198,7 @@ class HashMap {
     }
   }
 
-  hash(key) {
+  hash = key => {
     let hashCode = 0;
     const primeNumber = 31;
     for (let i = 0; i < key.length; i++) {
@@ -208,7 +208,7 @@ class HashMap {
   }
 
   // update key with value, create if non-existent
-  set(key, value) {
+  set = (key, value) => {
     const bucket = this.map[this.hash(key)];
     if (bucket.head()) {
       const node = bucket.find(value);
@@ -220,15 +220,20 @@ class HashMap {
   }
 
   // return value associated with key, or null if none
-  get(key) {
+  get = key => {
     const bucket = this.map[this.hash(key)];
-    console.log(this.map[this.hash(key)])
     const node = bucket.find(key);
     if (node) return node.value;
     return null;
   }
+
+  // return true if key is in hash map, false if not
+  has = key => this.get(key) ? true : false 
+
+
 }
 
 const map = new HashMap();
 map.set('Carlos', 'A cool guy');
-console.log(map.get('Carlos'))
+console.log(`The map ${map.has('Carlos') ? 'does' : 'does not'} have 'Carlos'`)
+console.log(`The map ${map.has('Zach') ? 'does' : 'does not'} have 'Zach'`)
