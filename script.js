@@ -15,6 +15,17 @@ class LinkedList {
     return string;
   }
 
+  getValues = () => {
+    if (!this.root) return [];
+    let node = this.root;
+    const valueArray = [];
+    while (node) {
+      valueArray.push(node.value);
+      node = node.next;
+    }
+    return valueArray;
+  }
+
   getKeys = () => {
     if (!this.root) return [];
     let node = this.root;
@@ -288,6 +299,15 @@ class HashMap {
     });
     return keyArray;
   }
+
+  // return aray containing all values
+  values = () => {
+    let valueArray = [];
+    this.map.forEach(bucket => {
+      valueArray.push(...bucket.getValues());
+    });
+    return valueArray;
+  }
 }
 
 const map = new HashMap();
@@ -296,14 +316,14 @@ map.set("Carlos", "A cool guy");
 map.set("Carla", "A cool gal");
 map.entries();
 console.log(map.length())
-console.log(map.keys());
+console.log(map.values());
 console.log('\n\nclearing')
 map.clear();
 map.entries();
 console.log(map.length())
-console.log(map.keys());
+console.log(map.values());
 console.log('\n\nadding more')
 map.set("Carlos", "A cool guy");
 map.entries();
 console.log(map.length())
-console.log(map.keys());
+console.log(map.values());
