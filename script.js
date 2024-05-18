@@ -15,6 +15,17 @@ class LinkedList {
     return string;
   }
 
+  getPairs = () => {
+    if (!this.root) return [];
+    let node = this.root;
+    const pairArray = [];
+    while (node) {
+      pairArray.push([node.key, node.value]);
+      node = node.next;
+    }
+    return pairArray;
+  };
+
   getValues = () => {
     if (!this.root) return [];
     let node = this.root;
@@ -24,7 +35,7 @@ class LinkedList {
       node = node.next;
     }
     return valueArray;
-  }
+  };
 
   getKeys = () => {
     if (!this.root) return [];
@@ -35,7 +46,7 @@ class LinkedList {
       node = node.next;
     }
     return keyArray;
-  }
+  };
 
   append(key, value) {
     if (this.root === null) {
@@ -215,11 +226,11 @@ class Node {
 }
 
 class HashMap {
-  constructor(length = 16) {
-    this.arrayLength = length;
+  constructor(length = 16, loadFactor = 0.75) {
     this.map = new Array(length);
+    this.loadFactor = loadFactor;
     this.keyLength = 0;
-    for (let i = 0; i < this.arrayLength; i++) {
+    for (let i = 0; i < this.map.length; i++) {
       this.map[i] = new LinkedList();
     }
   }
@@ -233,8 +244,32 @@ class HashMap {
     return hashCode;
   };
 
+  // check load factor, grow and rehash if needed
+  checkLoadFactor = () => {
+    console.log(
+      `\n\nchecking load...${this.keyLength}/${
+        this.map.length
+      } (${this.keyLength / this.map.length}) >= ${this.loadFactor}?`,
+    );
+    if (this.keyLength / this.map.length >= this.loadFactor) {
+      console.log("yes, rehashing...");
+      const oldPairs = this.entries();
+      const newLength = this.map.length * 2;
+      this.map = new Array(newLength);
+      for (let i = 0; i < newLength; i++) {
+        this.map[i] = new LinkedList();
+      }
+      this.keyLength = 0;
+      oldPairs.forEach(pair => {
+        this.set(pair[0], pair[1], 'noCheck');
+      });
+    } else {
+      console.log("no...");
+    }
+  };
+
   // update key with value, create if non-existent
-  set = (key, value) => {
+  set = (key, value, checkLoad = 'check') => {
     const bucket = this.map[this.hash(key)];
     if (bucket.head()) {
       const node = bucket.find(key);
@@ -242,10 +277,12 @@ class HashMap {
       else {
         bucket.append(key, value);
         this.keyLength++;
+        if (checkLoad === 'check') this.checkLoadFactor();
       }
     } else {
       bucket.append(key, value);
       this.keyLength++;
+      if (checkLoad === 'check') this.checkLoadFactor();
     }
   };
 
@@ -269,15 +306,23 @@ class HashMap {
     return false;
   };
 
-  // print array containing all [key, value] pairs
-  entries = () => {
-    let string = "[ ";
+  // print everything, even if it's empty
+  debugEntries = () => {
+    let pairArray = [];
     this.map.forEach((bucket) => {
-      if (bucket.head() && string.length > 2) string += ", ";
-      string += bucket.toString();
+      pairArray.push(bucket.getPairs());
     });
-    string += " ]";
-    console.log(string);
+    return pairArray;
+  };
+
+  // return array containing all [key, value] pairs
+  entries = () => {
+    let pairArray = [];
+    this.map.forEach((bucket) => {
+      const bucketPairs = bucket.getPairs();
+      if (bucketPairs.length) pairArray.push(...bucketPairs);
+    });
+    return pairArray;
   };
 
   // return number of stored keys
@@ -286,7 +331,7 @@ class HashMap {
   // remove all entries in hashmap
   clear = () => {
     this.keyLength = 0;
-    for (let i = 0; i < this.arrayLength; i++) {
+    for (let i = 0; i < this.map.length; i++) {
       this.map[i] = new LinkedList();
     }
   };
@@ -294,36 +339,32 @@ class HashMap {
   // return array containing all keys
   keys = () => {
     let keyArray = [];
-    this.map.forEach(bucket => {
+    this.map.forEach((bucket) => {
       keyArray.push(...bucket.getKeys());
     });
     return keyArray;
-  }
+  };
 
   // return aray containing all values
   values = () => {
     let valueArray = [];
-    this.map.forEach(bucket => {
+    this.map.forEach((bucket) => {
       valueArray.push(...bucket.getValues());
     });
     return valueArray;
-  }
+  };
 }
 
-const map = new HashMap();
-console.log(map.length());
+const map = new HashMap(4, .75);
 map.set("Carlos", "A cool guy");
+console.log(map.debugEntries());
 map.set("Carla", "A cool gal");
-map.entries();
-console.log(map.length())
-console.log(map.values());
-console.log('\n\nclearing')
-map.clear();
-map.entries();
-console.log(map.length())
-console.log(map.values());
-console.log('\n\nadding more')
-map.set("Carlos", "A cool guy");
-map.entries();
-console.log(map.length())
-console.log(map.values());
+console.log(map.debugEntries());
+map.set("Steven", "Pretty alright");
+console.log(map.debugEntries());
+map.set("Jetta", "Neat");
+console.log(map.debugEntries());
+map.set("Jose", "Bookish");
+console.log(map.debugEntries());
+map.set("Samwise", "Dependable");
+console.log(map.debugEntries());
