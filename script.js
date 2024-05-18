@@ -5,7 +5,7 @@ class LinkedList {
   }
 
   toString() {
-    if (!this.root) return '';
+    if (!this.root) return "";
     let string = `[ ${this.root?.key}, ${this.root?.value} ]`;
     let node = this.root.next;
     while (node) {
@@ -237,24 +237,25 @@ class HashMap {
 
   // print array containing all [key, value] pairs
   entries = () => {
-    let string = '';
-    this.map.forEach((bucket)=> {
-      if (bucket.head() && string.length > 0) string += ', '
-      string += bucket.toString()
+    let string = "";
+    this.map.forEach((bucket) => {
+      if (bucket.head() && string.length > 0) string += ", ";
+      string += bucket.toString();
     });
     console.log(string);
-  }
+  };
 }
 
 const map = new HashMap();
-map.set('Carlos', 'A cool guy');
-map.set('Carla', 'A cool gal');
+map.set("Carlos", "A cool guy");
+map.set("Carla", "A cool gal");
 map.entries();
-console.log(`The map ${map.has('Carlos') ? 'does' : 'does not'} have 'Carlos'`);
+console.log(`The map ${map.has("Carlos") ? "does" : "does not"} have 'Carlos'`);
 console.log(
-  `${map.remove('Carlos') ? 'Successfully' : 'Unsuccessfully'} removed 'Carlos'`
+  `${map.remove("Carlos") ? "Successfully" : "Unsuccessfully"} removed 'Carlos'`,
 );
 console.log(
-  `${map.remove('Steven') ? 'Successfully' : 'Unsuccessfully'} removed 'Steven'`
+  `${map.remove("Steven") ? "Successfully" : "Unsuccessfully"} removed 'Steven'`,
 );
 map.entries();
+
