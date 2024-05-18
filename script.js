@@ -194,9 +194,10 @@ class Node {
 
 class HashMap {
   constructor(length = 16) {
-    this.keyLength = 0;
+    this.arrayLength = length;
     this.map = new Array(length);
-    for (let i = 0; i < length; i++) {
+    this.keyLength = 0;
+    for (let i = 0; i < this.arrayLength; i++) {
       this.map[i] = new LinkedList();
     }
   }
@@ -248,16 +249,25 @@ class HashMap {
 
   // print array containing all [key, value] pairs
   entries = () => {
-    let string = "";
+    let string = "[ ";
     this.map.forEach((bucket) => {
-      if (bucket.head() && string.length > 0) string += ", ";
+      if (bucket.head() && string.length > 2) string += ", ";
       string += bucket.toString();
     });
+    string += " ]";
     console.log(string);
   };
 
   // return number of stored keys
   length = () => this.keyLength;
+
+  // remove all entries in hashmap
+  clear = () => {
+    this.keyLength = 0;
+    for (let i = 0; i < this.arrayLength; i++) {
+      this.map[i] = new LinkedList();
+    }
+  };
 }
 
 const map = new HashMap();
@@ -265,9 +275,12 @@ console.log(map.length());
 map.set("Carlos", "A cool guy");
 map.set("Carla", "A cool gal");
 map.entries();
-console.log(map.length());
-map.remove("Carlos");
-map.set("Carla", "Cooler");
+console.log(map.length())
+console.log('clearing')
+map.clear();
 map.entries();
-console.log(map.length());
-
+console.log(map.length())
+console.log('adding more')
+map.set("Carlos", "A cool guy");
+map.entries();
+console.log(map.length())
