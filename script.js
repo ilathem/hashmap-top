@@ -194,6 +194,7 @@ class Node {
 
 class HashMap {
   constructor(length = 16) {
+    this.keyLength = 0;
     this.map = new Array(length);
     for (let i = 0; i < length; i++) {
       this.map[i] = new LinkedList();
@@ -213,11 +214,15 @@ class HashMap {
   set = (key, value) => {
     const bucket = this.map[this.hash(key)];
     if (bucket.head()) {
-      const node = bucket.find(value);
+      const node = bucket.find(key);
       if (node) node.value = value;
-      else bucket.append(key, value);
+      else {
+        bucket.append(key, value);
+        this.keyLength++;
+      }
     } else {
       bucket.append(key, value);
+      this.keyLength++;
     }
   };
 
@@ -233,7 +238,13 @@ class HashMap {
   has = (key) => (this.get(key) ? true : false);
 
   // remove key in hash map, return true if success, false if fail
-  remove = (key) => this.map[this.hash(key)].remove(key) && true;
+  remove = (key) => {
+    if (this.map[this.hash(key)].remove(key)) {
+      this.keyLength--;
+      return true;
+    }
+    return false;
+  };
 
   // print array containing all [key, value] pairs
   entries = () => {
@@ -244,18 +255,19 @@ class HashMap {
     });
     console.log(string);
   };
+
+  // return number of stored keys
+  length = () => this.keyLength;
 }
 
 const map = new HashMap();
+console.log(map.length());
 map.set("Carlos", "A cool guy");
 map.set("Carla", "A cool gal");
 map.entries();
-console.log(`The map ${map.has("Carlos") ? "does" : "does not"} have 'Carlos'`);
-console.log(
-  `${map.remove("Carlos") ? "Successfully" : "Unsuccessfully"} removed 'Carlos'`,
-);
-console.log(
-  `${map.remove("Steven") ? "Successfully" : "Unsuccessfully"} removed 'Steven'`,
-);
+console.log(map.length());
+map.remove("Carlos");
+map.set("Carla", "Cooler");
 map.entries();
+console.log(map.length());
 
