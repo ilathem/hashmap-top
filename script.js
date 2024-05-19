@@ -363,12 +363,3 @@ class HashSet extends HashMap {
   }
 }
 
-const set = new HashSet(4, 0.75);
-set.set("Frodo");
-console.log(set.debugEntries());
-set.set("Samwise");
-console.log(set.debugEntries());
-set.set("Bilbo");
-console.log(set.debugEntries());
-set.set("Gandalf");
-console.log(set.debugEntries());
