@@ -20,7 +20,9 @@ class LinkedList {
     let node = this.root;
     const pairArray = [];
     while (node) {
-      pairArray.push([node.key, node.value]);
+      node.value
+        ? pairArray.push([node.key, node.value])
+        : pairArray.push([node.key]);
       node = node.next;
     }
     return pairArray;
@@ -218,9 +220,9 @@ class LinkedList {
 }
 
 class Node {
-  constructor(key, value) {
+  constructor(key = "", value = "") {
     this.key = key;
-    this.value = value;
+    if (value) this.value = value;
     this.next = null;
   }
 }
@@ -260,8 +262,8 @@ class HashMap {
         this.map[i] = new LinkedList();
       }
       this.keyLength = 0;
-      oldPairs.forEach(pair => {
-        this.set(pair[0], pair[1], 'noCheck');
+      oldPairs.forEach((pair) => {
+        this.set(pair[0], pair[1] || "", "noCheck");
       });
     } else {
       console.log("no...");
@@ -269,7 +271,7 @@ class HashMap {
   };
 
   // update key with value, create if non-existent
-  set = (key, value, checkLoad = 'check') => {
+  set = (key, value, checkLoad = "check") => {
     const bucket = this.map[this.hash(key)];
     if (bucket.head()) {
       const node = bucket.find(key);
@@ -277,12 +279,12 @@ class HashMap {
       else {
         bucket.append(key, value);
         this.keyLength++;
-        if (checkLoad === 'check') this.checkLoadFactor();
+        if (checkLoad === "check") this.checkLoadFactor();
       }
     } else {
       bucket.append(key, value);
       this.keyLength++;
-      if (checkLoad === 'check') this.checkLoadFactor();
+      if (checkLoad === "check") this.checkLoadFactor();
     }
   };
 
@@ -355,16 +357,18 @@ class HashMap {
   };
 }
 
-const map = new HashMap(4, .75);
-map.set("Carlos", "A cool guy");
-console.log(map.debugEntries());
-map.set("Carla", "A cool gal");
-console.log(map.debugEntries());
-map.set("Steven", "Pretty alright");
-console.log(map.debugEntries());
-map.set("Jetta", "Neat");
-console.log(map.debugEntries());
-map.set("Jose", "Bookish");
-console.log(map.debugEntries());
-map.set("Samwise", "Dependable");
-console.log(map.debugEntries());
+class HashSet extends HashMap {
+  set(key, check) {
+    super.set(key, null, check)
+  }
+}
+
+const set = new HashSet(4, 0.75);
+set.set("Frodo");
+console.log(set.debugEntries());
+set.set("Samwise");
+console.log(set.debugEntries());
+set.set("Bilbo");
+console.log(set.debugEntries());
+set.set("Gandalf");
+console.log(set.debugEntries());
